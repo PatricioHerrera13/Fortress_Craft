@@ -47,7 +47,7 @@ public class TanqueComb : MonoBehaviour
         UpdateScriptsState();
 
         // Verificamos si el jugador está en el rango, sostiene el bidón, y el bidón no está vacío
-        if (playerInRange && IsBidonHeld() && !Bidon.IsEmpty() && !isQTEActive && (Input.GetKeyDown(activationKey) || Input.GetKeyDown(activationKey1)))
+        if ( (playerInRange && IsBidonHeld() && !Bidon.IsEmpty() && !isQTEActive && Input.GetKeyDown(activationKey)) || (playerInRange && IsBidonHeld() && !Bidon.IsEmpty() && !isQTEActive && Input.GetKeyDown(activationKey1)))
         {
             Debug.Log("QTE Activado");
             QTECanvas.SetActive(true); // Activa el canvas del QTE

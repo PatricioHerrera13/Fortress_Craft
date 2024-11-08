@@ -333,7 +333,7 @@ public class OrderManager : MonoBehaviour
 
             progressBar = new GameObject("ProgressBar").AddComponent<Image>().rectTransform;
             progressBar.SetParent(slot.transform);
-            progressBar.sizeDelta = new Vector2(40f, 5f);
+            progressBar.sizeDelta = new Vector2(150f, 30f);
             progressBar.anchoredPosition = new Vector2(0, -25f);
             progressBar.GetComponent<Image>().color = Color.green;
 

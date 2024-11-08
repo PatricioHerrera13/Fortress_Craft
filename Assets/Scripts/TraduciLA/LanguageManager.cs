@@ -7,7 +7,7 @@ public class LanguageManager : MonoBehaviour
 {
     public static LanguageManager Instance { get; private set; }
 
-    private const string PROJECT_ID = "cm36leb550001m927vojfdnor";
+    private const string PROJECT_ID = "cm2kyairz00013qkntrs3g90y";
     private Dictionary<string, string> translations = new Dictionary<string, string>();
     private string currentLanguage = Languages.languageCodes["Spanish"]; // Idioma por defecto es español
 
@@ -41,7 +41,7 @@ public class LanguageManager : MonoBehaviour
             yield break; // Si el idioma es "es-AR", no se hace la petición
         }
 
-        string url = "https://traducila.vercel.app/api/translations/cm36leb550001m927vojfdnor/en-US";
+        string url = "https://traducila.vercel.app/api/translations/cm2kyairz00013qkntrs3g90y/en-US";
         UnityWebRequest request = UnityWebRequest.Get(url);
         yield return request.SendWebRequest();
         Debug.Log(request.result);

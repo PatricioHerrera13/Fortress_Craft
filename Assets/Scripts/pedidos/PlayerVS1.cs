@@ -28,8 +28,7 @@ public class PlayerVS1 : MonoBehaviour
 
     private void Start()
     {
-        wallet = GetComponent<Wallet1>();
-        wallet.SetTextComponent(moneyText);
+        
     }
 
     public void AddMoneyToWallet(float amount)
