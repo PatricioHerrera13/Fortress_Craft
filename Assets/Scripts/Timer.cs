@@ -97,7 +97,7 @@ public class Timer : MonoBehaviour
     {
         isPhase3Active = true;
         textoTimer.enabled = true;
-        timer = 30f;
+        timer = 5f;
         tutorialCanvas.ShowPhase3Tutorial();
 
         orderManager.SetPhase(3); // Activa la fase 3 en OrderManager

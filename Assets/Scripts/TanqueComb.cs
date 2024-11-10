@@ -5,74 +5,80 @@ using UnityEngine.UI;
 
 public class TanqueComb : MonoBehaviour
 {
-    // Referencias a los scripts de otros objetos
-    public MonoBehaviour craftingTableScript; // Referencia a la mesa de crafteo
-    public MonoBehaviour turretScript; // Referencia a la torreta
-    public MonoBehaviour otherScript; // Otro script adicional
+    public MonoBehaviour craftingTableScript;
+    public MonoBehaviour turretScript;
+    public MonoBehaviour otherScript;
 
-    // Variables actuales
-    public GameObject QTECanvas; // Referencia al canvas del QTE
-    public BidonComb Bidon; // Referencia al bidón
-    public Transform player; // Referencia al Player
-    public float maxCapacity = 5f; // Capacidad máxima del tanque
-    public float currentFuel = 0f; // Combustible actual en el tanque
-    public KeyCode activationKey = KeyCode.X; // Tecla de activación del QTE en el inspector
-    public KeyCode activationKey1 = KeyCode.I;
+    public GameObject QTECanvas;
+    public BidonComb Bidon;
+    public Transform player1; // Referencia al Player 1
+    public Transform player2; // Referencia al Player 2
+    public float maxCapacity = 2f;
+    public float currentFuel = 0f;
 
-    public Canvas targetCanvas; // Canvas en el que se generará la barra de progreso
-    private GameObject fuelBar; // Referencia a la barra de progreso de combustible
-    private RectTransform fuelBarRect; // RectTransform de la barra para ajustar su tamaño
+    public Canvas targetCanvas;
+    public GameObject fuelBar;
+    private RectTransform fuelBarRect;
+    public Vector3 fuelBarOffset = new Vector3(-235, -610, 0);
 
     private bool isQTEActive = false;
-    private bool playerInRange = false; // Nuevo booleano para verificar si el jugador está en el rango
+    private bool playerInRange = false;
+    private Transform currentPlayer; // Referencia al jugador actual en rango
 
     void Start()
     {
-        CreateFuelBar();
-        UpdateScriptsState(); // Configura el estado de los scripts al inicio
+        if (fuelBar == null)
+        {
+            Debug.LogError("Fuel bar image no asignada en el inspector.");
+            return;
+        }
+    
+        fuelBarRect = fuelBar.GetComponent<RectTransform>(); // Obtén el RectTransform de la barra de progreso
+        fuelBar.gameObject.SetActive(false); // Activa la barra si está desactivada inicialmente
+        UpdateFuelBar(); // Inicializa el tamaño de la barra
+        UpdateScriptsState();
     }
 
     void Update()
     {
-        // Descontar combustible cada segundo si es mayor a 0
         if (currentFuel > 0)
         {
-            currentFuel = Mathf.Max(0, currentFuel - 0.01f * Time.deltaTime); // Ajustar la velocidad de consumo aquí
+            currentFuel = Mathf.Max(0, currentFuel - 0.01f * Time.deltaTime);
         }
 
-        // Actualiza la barra de progreso para reflejar el combustible actual
         UpdateFuelBar();
-
-        // Actualizar el estado de los scripts
         UpdateScriptsState();
 
-        // Verificamos si el jugador está en el rango, sostiene el bidón, y el bidón no está vacío
-        if ( (playerInRange && IsBidonHeld() && !Bidon.IsEmpty() && !isQTEActive && Input.GetKeyDown(activationKey)) || (playerInRange && IsBidonHeld() && !Bidon.IsEmpty() && !isQTEActive && Input.GetKeyDown(activationKey1)))
+        // Detectar si el jugador en rango sostiene el bidón y no está vacío
+        if (playerInRange && IsBidonHeld(currentPlayer) && !Bidon.IsEmpty() && !isQTEActive)
         {
-            Debug.Log("QTE Activado");
-            QTECanvas.SetActive(true); // Activa el canvas del QTE
-            isQTEActive = true;
+            if ((currentPlayer == player1 && Input.GetKeyDown(KeyCode.X)) || 
+                (currentPlayer == player2 && Input.GetKeyDown(KeyCode.I)))
+            {
+                Debug.Log("QTE Activado");
+                QTECanvas.SetActive(true);
+                isQTEActive = true;
+            }
         }
-        else if (!playerInRange || !IsBidonHeld() || Bidon.IsEmpty())
+        else if (!playerInRange || !IsBidonHeld(currentPlayer) || Bidon.IsEmpty())
         {
             QTECanvas.SetActive(false);
             isQTEActive = false;
         }
     }
 
-    // Método para actualizar el estado de los scripts según el combustible
     private void UpdateScriptsState()
     {
         bool hasFuel = currentFuel > 0;
 
         if (craftingTableScript != null)
-            craftingTableScript.enabled = hasFuel; // Habilita/deshabilita la mesa de crafteo
+            craftingTableScript.enabled = hasFuel;
 
         if (turretScript != null)
-            turretScript.enabled = hasFuel; // Habilita/deshabilita la torreta
+            turretScript.enabled = hasFuel;
 
         if (otherScript != null)
-            otherScript.enabled = hasFuel; // Habilita/deshabilita otro script adicional
+            otherScript.enabled = hasFuel;
     }
 
     void OnTriggerEnter(Collider other)
@@ -80,8 +86,18 @@ public class TanqueComb : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             playerInRange = true;
-            Debug.Log("Jugador en el rango del tanque.");
-            
+
+            // Verificar si es Player 1 o Player 2 y establecer el jugador en rango
+            if (other.transform == player1)
+            {
+                currentPlayer = player1;
+                Debug.Log("Player 1 en el rango del tanque.");
+            }
+            else if (other.transform == player2)
+            {
+                currentPlayer = player2;
+                Debug.Log("Player 2 en el rango del tanque.");
+            }
         }
     }
 
@@ -91,28 +107,26 @@ public class TanqueComb : MonoBehaviour
         {
             playerInRange = false;
             Debug.Log("Jugador fuera del rango del tanque.");
+            currentPlayer = null; // Resetear el jugador en rango
         }
     }
 
-    // Método para verificar si el bidón está en la mano del jugador
-    private bool IsBidonHeld()
+    private bool IsBidonHeld(Transform player)
     {
-        Transform hand = player.Find("Hand/HandPoint"); // Encuentra el HandPoint en la jerarquía del Player
+        if (player == null) return false;
+
+        Transform hand = player.Find("Hand/HandPoint");
         if (hand != null)
         {
             foreach (Transform child in hand)
             {
-                if (child.gameObject == Bidon.gameObject) // Verifica si el bidón es hijo de HandPoint
+                if (child.gameObject == Bidon.gameObject)
                 {
                     Debug.Log(Bidon.gameObject);
                     return true;
-
                 }
-                Debug.Log(Bidon.gameObject);
             }
-
         }
-        Debug.Log(Bidon.gameObject);
         return false;
     }
 
@@ -120,14 +134,13 @@ public class TanqueComb : MonoBehaviour
     {
         float fuelToTransfer = success ? Bidon.GetCurrentFuel() : Bidon.GetCurrentFuel() / 2;
         TransferFuel(fuelToTransfer);
-        
-        // Vaciar el bidón completamente después del QTE, independientemente del éxito o fallo
+        fuelBar.gameObject.SetActive(true);
+
         Bidon.RemoveFuel(Bidon.GetCurrentFuel());
 
         QTECanvas.SetActive(false);
         isQTEActive = false;
 
-        // Actualizar estado de scripts después del QTE
         UpdateScriptsState();
     }
 
@@ -135,7 +148,7 @@ public class TanqueComb : MonoBehaviour
     {
         float transferableAmount = Mathf.Min(amount, maxCapacity - currentFuel);
         currentFuel += transferableAmount;
-        currentFuel = Mathf.Round(currentFuel * 1000f) / 1000f; // Normalizar a 3 decimales
+        currentFuel = Mathf.Round(currentFuel * 1000f) / 1000f;
         Bidon.RemoveFuel(transferableAmount);
 
         Debug.Log("Combustible transferido al tanque: " + transferableAmount);
@@ -147,39 +160,20 @@ public class TanqueComb : MonoBehaviour
         return currentFuel >= maxCapacity;
     }
 
-    // Método para crear la barra de combustible en el canvas especificado
-    private void CreateFuelBar()
-    {
-        if (targetCanvas == null)
-        {
-            Debug.LogError("Canvas de destino no asignado para la barra de combustible.");
-            return;
-        }
-
-        // Crear el GameObject para la barra de combustible
-        fuelBar = new GameObject("FuelBar");
-        fuelBarRect = fuelBar.AddComponent<RectTransform>();
-        fuelBar.transform.SetParent(targetCanvas.transform);
-
-        // Ajustar las propiedades de RectTransform
-        fuelBarRect.sizeDelta = new Vector2(1000 * (currentFuel / maxCapacity), 10); // Ancho de 50 cuando el tanque está lleno
-        fuelBarRect.anchorMin = new Vector2(0.5f, 0f); // Ajustar para que esté debajo del objeto del tanque
-        fuelBarRect.anchorMax = new Vector2(0.5f, 0f);
-        fuelBarRect.pivot = new Vector2(0.5f, 1f);
-        fuelBarRect.position = Camera.main.WorldToScreenPoint(transform.position) + new Vector3(0, -20, 0); // Posición bajo el objeto
-
-        // Añadir un componente Image y ajustar su color
-        Image fuelBarImage = fuelBar.AddComponent<Image>();
-        fuelBarImage.color = Color.green; // Cambia el color si es necesario
-    }
-
-    // Método para actualizar el tamaño de la barra de combustible
     private void UpdateFuelBar()
     {
         if (fuelBarRect != null)
         {
-            fuelBarRect.sizeDelta = new Vector2(800 * (currentFuel / maxCapacity), 10); // Ancho máximo de 50
-            fuelBarRect.position = Camera.main.WorldToScreenPoint(transform.position) + new Vector3(0, -20, 0); // Actualiza la posición
+            
+            // Ajustar el ancho de la barra en función del combustible actual
+            fuelBarRect.sizeDelta = new Vector2(800 * (currentFuel / maxCapacity), 100); // Ancho máximo de 800
+
+            // Ajustar la posición de la barra con el offset personalizable
+            fuelBarRect.position = Camera.main.WorldToScreenPoint(transform.position) + fuelBarOffset;
+        }
+        if(currentFuel <= 0)
+        {
+            fuelBar.gameObject.SetActive(false);
         }
     }
 }

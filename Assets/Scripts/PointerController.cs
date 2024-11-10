@@ -9,7 +9,7 @@ public class PointerController : MonoBehaviour
     public RectTransform safeZone;
     public float moveSpeed = 100f;
     public TanqueComb tanqueComb; // Referencia al TanqueComb para finalizar el QTE
-    public KeyCode qteKey = KeyCode.X; // Tecla de activación del QTE en el inspector
+     // Tecla de activación del QTE en el inspector
     private float direction = 1f;
     private RectTransform pointerTransform;
     private Vector3 targetPosition;
@@ -35,7 +35,7 @@ public class PointerController : MonoBehaviour
             direction = -1f;
         }
 
-        if (Input.GetKeyDown(qteKey))
+        if ((Input.GetKeyDown(KeyCode.X)) || (Input.GetKeyDown(KeyCode.I)))
         {
             CheckSuccess();
         }

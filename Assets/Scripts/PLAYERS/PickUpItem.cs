@@ -192,7 +192,6 @@ public class PickUpItem : MonoBehaviour
         return pickedItemType;
     }
 
-    // NUEVO MÉTODO para obtener el prefab que está siendo sostenido
     public GameObject GetPickedPrefab()
     {
         return pickedItem; // Retorna el prefab del ítem recogido

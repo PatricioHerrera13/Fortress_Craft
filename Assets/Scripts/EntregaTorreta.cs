@@ -5,6 +5,7 @@ public class EntregaTorreta : MonoBehaviour
 {
     public List<ItemRequerido> itemsRequeridos; // Lista de objetos requeridos
     public Torreta torretaScript; // Referencia al script Torreta
+    
 
     private HashSet<string> itemsEntregados = new HashSet<string>(); // Conjunto para controlar los items entregados
     private bool canDeliver = false; // Controla si el jugador puede entregar

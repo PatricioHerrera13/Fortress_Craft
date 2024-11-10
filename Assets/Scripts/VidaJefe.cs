@@ -45,19 +45,16 @@ public class VidaJefe : MonoBehaviour
                 // Asegurar que la salud no baje de 0
                 saludActual = Mathf.Clamp(saludActual, 0f, saludMaxima);
 
-                // Calcular el nuevo ancho basado en el porcentaje de salud restante
+                // Calcular el nuevo valor de altura basado en el porcentaje de salud restante
                 float healthPercentage = saludActual / saludMaxima;
-                float newWidth = HP.sizeDelta.x * healthPercentage;
+                float newHeight = HP.sizeDelta.y * healthPercentage;
 
-                // Actualizar el ancho de la barra de vida
-                HP.sizeDelta = new Vector2(newWidth, HP.sizeDelta.y);
+                // Actualizar solo la altura de la barra de vida
+                HP.sizeDelta = new Vector2(HP.sizeDelta.x, newHeight);
 
                 // Mantener la posición inicial en X
                 HP.anchoredPosition = new Vector2(initialPosX, HP.anchoredPosition.y);
-
-                
             }
         }
     }
 }
-

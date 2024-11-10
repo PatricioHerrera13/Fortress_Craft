@@ -12,8 +12,8 @@ public class Torreta : MonoBehaviour
     public GameObject prefabRequerido;
 
     public int municionActual = 0;
-    public int maximoMunicion = 50;  // Límite absoluto de munición
-    public int limiteRecarga = 30;   // Límite mínimo para permitir recarga
+    public int maximoMunicion = 50;
+    public int limiteRecarga = 30;
     public int municionPorPrefab = 10;
 
     public Image barraMunicion;
@@ -28,7 +28,7 @@ public class Torreta : MonoBehaviour
         ActualizarBarraMunicion();
     }
 
-    void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
@@ -37,7 +37,7 @@ public class Torreta : MonoBehaviour
         }
     }
 
-    void OnTriggerExit(Collider other)
+    private void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
         {
@@ -65,11 +65,11 @@ public class Torreta : MonoBehaviour
         {
             municionActual = Mathf.Min(municionActual + municionPorPrefab, maximoMunicion);
             ActualizarBarraMunicion();
-            // Aquí se asume que el prefab se elimina del handPoint del jugador que interactúa
-            Transform handPoint = GetCurrentPlayerHandPoint();
-            if (handPoint != null && handPoint.childCount > 0)
+
+            Transform handpoint = GetCurrentPlayerHandPoint();
+            if (handpoint != null && handpoint.childCount > 0)
             {
-                Destroy(handPoint.GetChild(0).gameObject);
+                Destroy(handpoint.GetChild(0).gameObject);
             }
             Debug.Log("Munición agregada. Munición actual: " + municionActual);
         }
@@ -90,22 +90,43 @@ public class Torreta : MonoBehaviour
 
     private bool VerificarPrefabEnManos()
     {
-        Transform handPoint = GetCurrentPlayerHandPoint();
-        if (handPoint != null && handPoint.childCount > 0)
+        Transform handpoint = GetCurrentPlayerHandPoint();
+        if (handpoint != null)
         {
-            GameObject objetoEnManos = handPoint.GetChild(0).gameObject;
-
-            PrefabSprite spriteEnManos = objetoEnManos.GetComponent<PrefabSprite>();
-            PrefabSprite spriteRequerido = prefabRequerido.GetComponent<PrefabSprite>();
-
-            if (spriteEnManos != null && spriteRequerido != null)
+            Debug.Log("HandPoint encontrado con éxito.");
+            if (handpoint.childCount > 0)
             {
-                if (spriteEnManos.sprite == spriteRequerido.sprite)
+                GameObject objetoEnManos = handpoint.GetChild(0).gameObject;
+                Debug.Log("Objeto en mano encontrado: " + objetoEnManos.name);
+
+                Item itemEnManos = objetoEnManos.GetComponent<Item>();
+                Item itemRequerido = prefabRequerido.GetComponent<Item>();
+
+                if (itemEnManos != null && itemRequerido != null)
                 {
-                    Debug.Log("El sprite en las manos coincide con el prefab requerido.");
-                    return true;
+                    if (itemEnManos.itemType == itemRequerido.itemType)
+                    {
+                        Debug.Log("El itemType en las manos coincide con el prefab requerido.");
+                        return true;
+                    }
+                    else
+                    {
+                        Debug.LogWarning("El itemType en las manos no coincide con el prefab requerido.");
+                    }
+                }
+                else
+                {
+                    Debug.LogWarning("El objeto en manos o el prefab requerido no tienen un componente Item.");
                 }
             }
+            else
+            {
+                Debug.LogWarning("El HandPoint no tiene hijos.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("No se encontró HandPoint.");
         }
         return false;
     }
@@ -115,17 +136,42 @@ public class Torreta : MonoBehaviour
         Player player1 = FindObjectOfType<Player>();
         Player2 player2 = FindObjectOfType<Player2>();
 
-        // Devuelve el handPoint del jugador que está en la zona de recarga
         if (player1 != null && player1.GetComponent<Collider>().bounds.Intersects(zonaRecarga.bounds))
         {
-            return player1.handpoint; // Asegúrate de que el nombre sea correcto (handpoint en lugar de handPoint)
+            Debug.Log("Player1 está en la zona de recarga.");
+            return ObtenerHandPoint(player1.transform);
         }
         else if (player2 != null && player2.GetComponent<Collider>().bounds.Intersects(zonaRecarga.bounds))
         {
-            return player2.handpoint; // Asegúrate de que el nombre sea correcto (handpoint en lugar de handPoint)
+            Debug.Log("Player2 está en la zona de recarga.");
+            return ObtenerHandPoint(player2.transform);
         }
 
-        return null; // No se encontró un jugador en la zona
+        Debug.Log("No se encontró un jugador en la zona de recarga.");
+        return null;
+    }
+
+    private Transform ObtenerHandPoint(Transform playerTransform)
+    {
+        Transform hand = playerTransform.Find("Hand");
+        if (hand != null)
+        {
+            Transform handpoint = hand.Find("HandPoint");
+            if (handpoint != null)
+            {
+                Debug.Log("HandPoint encontrado.");
+                return handpoint;
+            }
+            else
+            {
+                Debug.LogWarning("HandPoint no encontrado en Hand.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Hand no encontrado en el jugador.");
+        }
+        return null;
     }
 
     IEnumerator DispararAutomaticamente()
