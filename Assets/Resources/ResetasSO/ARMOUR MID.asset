@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5501a1809dd54e941bb391e4fcfb2eb5, type: 3}
   m_Name: ARMOUR MID
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: 76b1aaaed8c457c40912a4e7664f261a, type: 3}
+  sprite: {fileID: 21300000, guid: ca3478bfe3e65a244bb69b2d4e05f30c, type: 3}
   inputItemSOList:
   - {fileID: 11400000, guid: f6293f664c9e2e549a3b1815e0ac957d, type: 2}
   - {fileID: 11400000, guid: 9aeedf7353cc2a64a9322ab9d32d2580, type: 2}
   outputItemSO: {fileID: 11400000, guid: 77546e0cccd0d4e4e861e47fc3532e30, type: 2}
-  craftingTime: 12
-  requiredPulses: 12
+  craftingTime: 15
+  requiredPulses: 20

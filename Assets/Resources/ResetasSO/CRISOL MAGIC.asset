@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5501a1809dd54e941bb391e4fcfb2eb5, type: 3}
   m_Name: CRISOL MAGIC
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: afe21a8dcb20a4f4095656eb15dc67a9, type: 3}
+  sprite: {fileID: 21300000, guid: 8a1f3b2b4896cf74ab0b6788addde502, type: 3}
   inputItemSOList:
   - {fileID: 11400000, guid: 20617106645f1be48b10c46608e26201, type: 2}
   - {fileID: 11400000, guid: 2954964dca551fd47bec7a9e22ea801e, type: 2}
   outputItemSO: {fileID: 11400000, guid: 8406f04fe32de9741a2671441fe0dc36, type: 2}
-  craftingTime: 12
-  requiredPulses: 0
+  craftingTime: 25
+  requiredPulses: 30

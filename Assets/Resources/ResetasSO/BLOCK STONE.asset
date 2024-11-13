@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5501a1809dd54e941bb391e4fcfb2eb5, type: 3}
   m_Name: BLOCK STONE
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: 946edb0603f025e4caa6840d71e4767c, type: 3}
+  sprite: {fileID: 21300000, guid: 4ac0a736066f39549ae23f40f36658c5, type: 3}
   inputItemSOList:
   - {fileID: 11400000, guid: 077d7d77b1fba6d4ebb00046085c477e, type: 2}
   - {fileID: 11400000, guid: 077d7d77b1fba6d4ebb00046085c477e, type: 2}
   outputItemSO: {fileID: 11400000, guid: 2e9909b70628efb4cb9fcaf77b95e7b1, type: 2}
-  craftingTime: 8
-  requiredPulses: 8
+  craftingTime: 5
+  requiredPulses: 10

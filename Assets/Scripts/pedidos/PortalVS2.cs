@@ -3,182 +3,153 @@ using UnityEngine;
 
 public class PortalVS2 : MonoBehaviour
 {
-    public OrderManagerPlayer2 orderManager; // Referencia al script OrderManager
-    public Collider jugadorCollider1; // Collider del jugador 1
-    public Collider jugadorCollider2; // Collider del jugador 2
+    public OrderManagerPlayer2 orderManager; // Referencia al script OrderManager del jugador 2
+    public Collider jugadorCollider; // Collider del jugador 2
     public List<OrderPrefabData> itemsRequeridos; // Lista de datos de pedidos requeridos
     public float cantEntrega = 0; // Contador de entregas
-    public PlayerVS1 player; // Referencia al jugador 1
-    public PlayerVS2 player2; // Referencia al segundo jugador
+    public PlayerVS2 player2; // Referencia al jugador 2
 
-    private bool jugador1Dentro = false; // Variable que indica si el jugador 1 está dentro del área
-    private bool jugador2Dentro = false; // Variable que indica si el jugador 2 está dentro del área
+    private bool jugadorDentro = false; // Variable que indica si el jugador está dentro del área
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other == jugadorCollider1)
+        if (other == jugadorCollider)
         {
-            jugador1Dentro = true; // El jugador 1 está dentro del área
-        }
-        else if (other == jugadorCollider2)
-        {
-            ////Debug.Log("2");
-            jugador2Dentro = true; // El jugador 2 está dentro del área
+            jugadorDentro = true; // El jugador está dentro del área
+            Debug.Log("Jugador 2 ha entrado en el área de entrega.");
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other == jugadorCollider1)
+        if (other == jugadorCollider)
         {
-            jugador1Dentro = false; // El jugador 1 ha salido del área
-        }
-        else if (other == jugadorCollider2)
-        {
-            ////Debug.Log("-2");
-            jugador2Dentro = false; // El jugador 2 ha salido del área
+            jugadorDentro = false; // El jugador ha salido del área
+            Debug.Log("Jugador 2 ha salido del área de entrega.");
         }
     }
 
     private void Update()
     {
-        if (jugador1Dentro && Input.GetKeyDown(KeyCode.X))
+        if (jugadorDentro && Input.GetKeyDown(KeyCode.I))
         {
-            ProcesarEntrega(player);
-        }
-        else if (jugador2Dentro && Input.GetKeyDown(KeyCode.I))
-        {
-            //Debug.Log("2!!");
-            ProcesarEntrega(player2);
+            Debug.Log("Tecla I presionada para procesar entrega.");
+            ProcesarEntrega();
         }
     }
 
-    private void ProcesarEntrega(PlayerVS1 jugador)
+    private void ProcesarEntrega()
     {
-        // Obtener el script PickUpItem del jugador 1
-        var playerPickUp = jugador.GetComponentInChildren<PickUpItem>();
+        var playerPickUp = player2.GetComponentInChildren<PickUpItem2>();
         if (playerPickUp != null)
         {
-            GameObject prefabJugador = playerPickUp.GetPickedPrefab(); // Obtener el prefab recogido
+            Debug.Log("Se encontró el componente PickUpItem2 en el jugador 2.");
 
+            GameObject prefabJugador = playerPickUp.GetPickedPrefab();
             if (prefabJugador != null)
             {
-                ItemSOHolder itemSOHolder = prefabJugador.GetComponent<ItemSOHolder>(); // Obtener el ItemSOHolder
+                Debug.Log("Jugador 2 tiene un objeto en sus manos para entregar: " + prefabJugador.name);
+
+                ItemSOHolder itemSOHolder = prefabJugador.GetComponent<ItemSOHolder>();
                 if (itemSOHolder != null)
                 {
-                    ItemSO itemSO = itemSOHolder.itemSO; // Obtener el ScriptableObject ItemSO desde el ItemSOHolder
-
+                    ItemSO itemSO = itemSOHolder.itemSO;
                     if (itemSO != null)
                     {
-                        OrderPrefabData orderData = FindOrderData(prefabJugador); // Buscar el pedido relacionado
+                        Debug.Log("Se encontró ItemSO: " + itemSO.name);
 
-                        if (orderData != null && orderManager.EliminarPedido(orderData.orderSprite))
+                        OrderPrefabData orderData = FindOrderData(prefabJugador);
+                        if (orderData != null)
                         {
-                            // Eliminar el prefab de las manos del jugador
-                            EliminarItemDeLasManos(jugador);
+                            Debug.Log("Se encontró un pedido coincidente para el objeto: " + orderData.orderSprite.name);
 
-                            // Sumar dinero del valor del ItemSO
-                            jugador.wallet.AddMoney(itemSO.valor); // Sumar el valor del ItemSO a la billetera del jugador actual
-                            cantEntrega += 1;
+                            bool pedidoEliminado = orderManager.EliminarPedido(orderData.orderSprite, itemSO);
+                            if (pedidoEliminado) 
+                            {
+                                Debug.Log("Pedido eliminado correctamente. Añadiendo dinero y aumentando contador de entregas.");
+                                EliminarItemDeLasManos(player2);
+                                player2.wallet.AddMoney(itemSO.valor);
+                                cantEntrega += 1;
+                                Debug.Log("Entrega completada. Cantidad total de entregas: " + cantEntrega);
+                            }
+                            else
+                            {
+                                Debug.LogWarning("Error al intentar eliminar el pedido en OrderManagerPlayer2.");
+                                EliminarItemDeLasManos(player2); // Entrega errónea
+                            }
                         }
                         else
                         {
-                            // Entrega errónea. Elimina el ítem
-                            EliminarItemDeLasManos(jugador);
+                            Debug.LogWarning("No se encontró un pedido coincidente para el objeto en itemsRequeridos.");
+                            EliminarItemDeLasManos(player2); // Entrega errónea
                         }
                     }
-                }
-            }
-        }
-    }
-
-    private void ProcesarEntrega(PlayerVS2 jugador2)
-    {
-        //Debug.Log("Entregando");
-        // Obtener el script PickUpItem2 del jugador 2
-        var playerPickUp = jugador2.GetComponentInChildren<PickUpItem2>();
-        //Debug.Log(playerPickUp);
-        if (playerPickUp != null)
-        {
-            GameObject prefabJugador = playerPickUp.GetPickedPrefab(); // Obtener el prefab recogido
-            //Debug.Log(prefabJugador);
-            if (prefabJugador != null)
-            {
-                ItemSOHolder itemSOHolder = prefabJugador.GetComponent<ItemSOHolder>(); // Obtener el ItemSOHolder
-                //Debug.Log(itemSOHolder);
-                if (itemSOHolder != null)
-                {
-                    ItemSO itemSO = itemSOHolder.itemSO; // Obtener el ScriptableObject ItemSO desde el ItemSOHolder
-                    //Debug.Log(itemSO);
-                    if (itemSO != null)
+                    else
                     {
-                        OrderPrefabData orderData = FindOrderData(prefabJugador); // Buscar el pedido relacionado
-                        //Debug.Log(orderData);
-                        if (orderData != null && orderManager.EliminarPedido(orderData.orderSprite))
-                        {
-                            // Eliminar el prefab de las manos del jugador
-                            EliminarItemDeLasManos(jugador2);
-
-                            // Sumar dinero del valor del ItemSO
-                            jugador2.wallet.AddMoney(itemSO.valor); // Sumar el valor del ItemSO a la billetera del jugador actual
-                            cantEntrega += 1;
-                            //Debug.Log("Entregado!!!");
-                        }
-                        else
-                        {
-                            // Entrega errónea. Elimina el ítem
-                            EliminarItemDeLasManos(jugador2);
-                            //Debug.Log("Mal Entregado");
-                        }
+                        Debug.LogWarning("El itemSO en itemSOHolder es nulo.");
                     }
                 }
+                else
+                {
+                    Debug.LogWarning("El prefab en manos del jugador no contiene un componente ItemSOHolder.");
+                }
             }
+            else
+            {
+                Debug.LogWarning("El jugador 2 no tiene ningún objeto en manos.");
+            }
+        }
+        else
+        {
+            Debug.LogWarning("No se encontró el componente PickUpItem2 en el jugador 2.");
         }
     }
 
-    private void EliminarItemDeLasManos(PlayerVS1 player)
+    private void EliminarItemDeLasManos(PlayerVS2 player)
     {
         Transform hand = player.transform.Find("Hand/HandPoint");
         if (hand != null && hand.childCount > 0)
         {
+            Debug.Log("Eliminando el objeto de las manos del jugador 2.");
             Destroy(hand.GetChild(0).gameObject);
+            FindObjectOfType<PickUpItem2>().ReleaseItem();
         }
-    }
-
-    private void EliminarItemDeLasManos(PlayerVS2 jugador2)
-    {
-        Transform hand = jugador2.transform.Find("Hand/HandPoint");
-        if (hand != null && hand.childCount > 0)
+        else
         {
-            Destroy(hand.GetChild(0).gameObject);
+            Debug.LogWarning("No se encontró objeto en las manos del jugador para eliminar.");
         }
     }
 
     public void ActualizarItemsRequeridos()
     {
-        itemsRequeridos.Clear(); // Limpiar la lista antes de actualizar
-        var activeOrders = orderManager.GetActiveOrders(); // Obtener las órdenes activas
-
+        itemsRequeridos.Clear();
+        var activeOrders = orderManager.GetActiveOrders();
         foreach (OrderPrefabData pedido in activeOrders)
         {
-            itemsRequeridos.Add(pedido); // Agregar el pedido completo (datos del sprite, prefab, etc.)
+            itemsRequeridos.Add(pedido);
+            Debug.Log("Pedido actualizado en itemsRequeridos: " + pedido.orderSprite.name);
         }
     }
 
     private OrderPrefabData FindOrderData(GameObject prefab)
     {
         SpriteRenderer spriteRenderer = prefab.GetComponent<SpriteRenderer>();
-        if (spriteRenderer == null) return null;
+        if (spriteRenderer == null)
+        {
+            Debug.LogWarning("El objeto en manos del jugador no tiene un SpriteRenderer.");
+            return null;
+        }
 
         Sprite objetoSprite = spriteRenderer.sprite;
-
         foreach (OrderPrefabData order in itemsRequeridos)
         {
             if (order.objectSprite == objetoSprite)
             {
+                Debug.Log("Pedido coincidente encontrado para el objeto sprite: " + objetoSprite.name);
                 return order;
             }
         }
+        Debug.LogWarning("No se encontró un pedido coincidente para el sprite del objeto.");
         return null;
     }
 }

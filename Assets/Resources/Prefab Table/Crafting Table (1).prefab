@@ -342,6 +342,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d1fbba5af17abab40b4411b1bd994e35, type: 2}
   placeItemsAreaBoxCollider: {fileID: 5494973352529803647}
   itemSpawnPoint: {fileID: 5494973354512613971}
+  craftingProgressBar: {fileID: 0}
+  craftingPulsationBar: {fileID: 0}
+  craftingMode: 0
 --- !u!1 &5494973354512613996
 GameObject:
   m_ObjectHideFlags: 0

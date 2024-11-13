@@ -16,6 +16,8 @@ public class PozoCombustible : MonoBehaviour
         }
     }
 
+    
+
     void OnTriggerEnter(Collider other)
     {
         // Verifica si el jugador entra al trigger

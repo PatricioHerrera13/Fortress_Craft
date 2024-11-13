@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Armor magic
   prefab: {fileID: 8862758157537805280, guid: a5e2834a0695aa145a1ee16fae56af33, type: 3}
-  valor: 20
+  valor: 30
+  isConsumable: 0

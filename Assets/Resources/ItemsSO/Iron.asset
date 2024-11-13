@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Iron
   prefab: {fileID: 1105320969925903822, guid: b104bfb5ea8f5fb41846042406c1032d, type: 3}
-  valor: 5
+  valor: 10
+  isConsumable: 0

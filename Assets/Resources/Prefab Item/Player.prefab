@@ -78,6 +78,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hand: {fileID: 6672039516890515239}
+  pickedItem: {fileID: 0}
   pickedItemType: 
   throwForce: 15
   throwAngle: 45
@@ -181,7 +182,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: 685b7c68351eb854786375b75e58b579, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -257,6 +258,7 @@ MonoBehaviour:
   hand: {fileID: 6672039516890515238}
   handpoint: {fileID: 6672039518106934162}
   handOffsetDistance: 1.8
+  anim: {fileID: 0}
 --- !u!1 &6672039518106934163
 GameObject:
   m_ObjectHideFlags: 0

@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5501a1809dd54e941bb391e4fcfb2eb5, type: 3}
   m_Name: BOW
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: 003b1d8dcd694584186ed69fa1e9af5e, type: 3}
+  sprite: {fileID: 21300000, guid: 70b3303a3d39e65439fbe89244b62662, type: 3}
   inputItemSOList:
   - {fileID: 11400000, guid: f6293f664c9e2e549a3b1815e0ac957d, type: 2}
   - {fileID: 11400000, guid: cfd8e64ce5543ec44868a74ce67db94f, type: 2}
   outputItemSO: {fileID: 11400000, guid: bda1061726f3cc646ab9434bed8e94f2, type: 2}
-  craftingTime: 8
-  requiredPulses: 5
+  craftingTime: 10
+  requiredPulses: 15

@@ -29,6 +29,8 @@ public class OrderManager : MonoBehaviour
     public bool fase3 = false;
     public bool fase4 = false;
 
+    //public float rest = 1f;
+
     private void Start()
     {
         StartCoroutine(GenerateOrders());
@@ -181,7 +183,7 @@ public class OrderManager : MonoBehaviour
                     orderSlots[i].sprite = newOrderSprite;
                     orderSlots[i].gameObject.SetActive(true);
 
-                    Order newOrder = new Order(orderSlots[i], newOrderData, 30f);
+                    Order newOrder = new Order(orderSlots[i], newOrderData, 100f);
                     activeOrders.Add(newOrder);
                     StartCoroutine(newOrder.StartOrderTimer(() => RemoveOrder(newOrder)));
 
@@ -209,8 +211,17 @@ public class OrderManager : MonoBehaviour
     {
         order.slot.gameObject.SetActive(false);
         activeOrders.Remove(order);
-
-        wallet.DeductFromWallet(5f);
+        
+        // Deducir dinero solo si el pedido no se cumplió en el tiempo
+        if (order.timeRemaining <= 0)
+        {
+            //wallet.DeductFromWallet(1f); // Deduce dinero solo si el pedido falló
+            Debug.Log("Pedido fallido. Dinero descontado.");
+        }
+        else
+        {
+            Debug.Log("Pedido completado. No se descontó dinero.");
+        }
 
         AdjustOrderPositions();
     }
@@ -219,15 +230,15 @@ public class OrderManager : MonoBehaviour
     {
         float panelWidth = orderPanel.rect.width;
         float totalOrdersWidth = activeOrders.Count * 50f;
-        float spacing = Mathf.Min((panelWidth - totalOrdersWidth) / (activeOrders.Count + 1), 50f);
+        float spacing = Mathf.Min((panelWidth - totalOrdersWidth) / (activeOrders.Count + 1), 150f);
 
         for (int i = 0; i < activeOrders.Count; i++)
         {
             RectTransform orderTransform = activeOrders[i].slot.GetComponent<RectTransform>();
-            float newXPosition = spacing * (i + 1) + 50f * i;
+            float newXPosition = spacing * (i + 1) + 100f * i;
             Vector3 newPosition = new Vector3(newXPosition, orderTransform.anchoredPosition.y, 0);
             orderTransform.anchoredPosition = newPosition;
-            orderTransform.sizeDelta = new Vector2(50f, 50f);
+            orderTransform.sizeDelta = new Vector2(35f, 35f);
         }
     }
 
@@ -319,7 +330,7 @@ public class OrderManager : MonoBehaviour
     {
         public Image slot;
         public OrderPrefabData orderData;
-        private float timeRemaining;
+        public float timeRemaining;
         private RectTransform progressBar;
         private float initialDuration;
         private float initialWidth;
@@ -333,8 +344,8 @@ public class OrderManager : MonoBehaviour
 
             progressBar = new GameObject("ProgressBar").AddComponent<Image>().rectTransform;
             progressBar.SetParent(slot.transform);
-            progressBar.sizeDelta = new Vector2(150f, 30f);
-            progressBar.anchoredPosition = new Vector2(0, -25f);
+            progressBar.sizeDelta = new Vector2(90f, 15f);
+            progressBar.anchoredPosition = new Vector2(0, -20f);
             progressBar.GetComponent<Image>().color = Color.green;
 
             initialWidth = progressBar.sizeDelta.x;

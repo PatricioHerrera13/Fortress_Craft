@@ -2,27 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class OrderManagerPlayer1 : MonoBehaviour
 {
-    public List<Sprite> possibleOrders; // Lista de imágenes posibles para los pedidos
-    public List<Image> orderSlots; // Los slots donde se mostrarán los pedidos
-    public RectTransform orderPanel; // El panel que contiene los pedidos
-    public float orderInterval = 10f; // Tiempo en segundos entre la aparición de cada pedido
+    public List<OrderPrefabData> orderPrefabList; // Lista que vincula sprites de pedidos con prefabs y objetos requeridos
+    public List<Image> orderSlots; // Slots donde se mostrarán los pedidos
+    public RectTransform orderPanel; // Panel que contiene los pedidos
+    public float orderInterval = 10f; // Tiempo en segundos entre pedidos
     public int maxOrders = 3; // Cantidad máxima de pedidos
-    public List<OrderPrefabData> orderPrefabList; // Lista que vincula sprites de pedidos con prefabs
-    //public Button back;
-
-    // Nueva referencia a la billetera
-    public Wallet1 wallet; // Asegúrate de arrastrar el componente Wallet en el Inspector
 
     private List<Order> activeOrders = new List<Order>();
 
     private void Start()
     {
         StartCoroutine(GenerateOrders());
-        //back.onClick.AddListener(atras);
     }
 
     private IEnumerator GenerateOrders()
@@ -62,6 +55,7 @@ public class OrderManagerPlayer1 : MonoBehaviour
                 StartCoroutine(newOrder.StartOrderTimer(() => RemoveOrder(newOrder)));
 
                 AdjustOrderPositions();
+                // Llama a un método que actualiza los elementos requeridos en el portal para cada jugador
                 FindObjectOfType<PortalVS1>().ActualizarItemsRequeridos();
                 break;
             }
@@ -84,39 +78,34 @@ public class OrderManagerPlayer1 : MonoBehaviour
     {
         order.slot.gameObject.SetActive(false);
         activeOrders.Remove(order);
-        
-        // Descontar 5 de la billetera
-        wallet.DeductFromWallet(1f);
-
         AdjustOrderPositions();
     }
 
     private void AdjustOrderPositions()
     {
         float panelWidth = orderPanel.rect.width;
-        float totalOrdersWidth = activeOrders.Count * 50f;
-        float spacing = Mathf.Min((panelWidth - totalOrdersWidth) / (activeOrders.Count + 1), 50f);
+        float totalOrdersWidth = activeOrders.Count * 30f;
+        float spacing = Mathf.Min((panelWidth - totalOrdersWidth) / (activeOrders.Count + 1), 20f);
 
         for (int i = 0; i < activeOrders.Count; i++)
         {
             RectTransform orderTransform = activeOrders[i].slot.GetComponent<RectTransform>();
-            float newXPosition = spacing * (i + 1) + 50f * i;
+            float newXPosition = spacing * (i + 1) + 20f * i;
             Vector3 newPosition = new Vector3(newXPosition, orderTransform.anchoredPosition.y, 0);
             orderTransform.anchoredPosition = newPosition;
-            orderTransform.sizeDelta = new Vector2(50f, 50f);
+            orderTransform.sizeDelta = new Vector2(65f, 65f);
         }
     }
 
-    public bool EliminarPedido(Sprite pedidoSprite)
+    public bool EliminarPedido(Sprite pedidoSprite, ItemSO itemSO)
     {
         foreach (Order order in activeOrders)
         {
-            if (order.slot.sprite == pedidoSprite)
+            if (order.slot.sprite == pedidoSprite && order.orderData.itemData == itemSO)
             {
                 order.slot.gameObject.SetActive(false);
                 activeOrders.Remove(order);
                 AdjustOrderPositions();
-                
                 FindObjectOfType<PortalVS1>().ActualizarItemsRequeridos();
                 return true;
             }
@@ -135,11 +124,6 @@ public class OrderManagerPlayer1 : MonoBehaviour
             }
         }
         return activeOrdersList;
-    }
-
-    void atras()
-    {
-        SceneManager.LoadScene("MENU");
     }
 
     private class Order
@@ -161,11 +145,11 @@ public class OrderManagerPlayer1 : MonoBehaviour
             // Configuración de la barra de progreso
             progressBar = new GameObject("ProgressBar").AddComponent<Image>().rectTransform;
             progressBar.SetParent(slot.transform);
-            progressBar.sizeDelta = new Vector2(40f, 5f); // Tamaño inicial
-            progressBar.anchoredPosition = new Vector2(0, -25f); // Posición debajo de la imagen
+            progressBar.sizeDelta = new Vector2(100f, 20f);
+            progressBar.anchoredPosition = new Vector2(0, -35f);
             progressBar.GetComponent<Image>().color = Color.green;
 
-            initialWidth = progressBar.sizeDelta.x; // Ancho inicial
+            initialWidth = progressBar.sizeDelta.x;
         }
 
         public IEnumerator StartOrderTimer(System.Action onTimeUp)
@@ -174,14 +158,12 @@ public class OrderManagerPlayer1 : MonoBehaviour
             {
                 timeRemaining -= Time.deltaTime;
 
-                // Actualizar el ancho de la barra de progreso
                 float width = initialWidth * (timeRemaining / initialDuration);
                 progressBar.sizeDelta = new Vector2(width, progressBar.sizeDelta.y);
 
                 yield return null;
             }
 
-            // Eliminar la barra de progreso y notificar el final del tiempo
             Object.Destroy(progressBar.gameObject);
             onTimeUp.Invoke();
         }

@@ -10,12 +10,16 @@ public class BidonComb : MonoBehaviour
     private bool isHeldByPlayer; // Estado de si el bidón está siendo sostenido
 
     public Canvas targetCanvas; // Canvas en el que se generará la barra de progreso
-    public GameObject fuelBar; // Referencia a la barra de progreso de combustible
     private RectTransform fuelBarRect; // RectTransform de la barra para ajustar su tamaño
     private Image fuelBarImage; // Imagen de la barra de combustible
 
+    public Sprite fullSprite; // Sprite del bidón lleno
+    public Sprite normalSprite;
+    private SpriteRenderer spriteRenderer; // SpriteRenderer del bidón
+
     void Start()
     {
+        spriteRenderer = GetComponent<SpriteRenderer>(); // Obtener el SpriteRenderer del bidón
         CreateFuelBar(); // Crear la barra de combustible al inicio
     }
 
@@ -25,11 +29,13 @@ public class BidonComb : MonoBehaviour
 
         if (IsFull()) 
         {
-            // Cambiar el color de la barra a rojo cuando esté llena
-            fuelBarImage.color = Color.red;
-            
-            // Ocultar la barra cuando el bidón esté lleno
-            fuelBar.SetActive(false);
+            fuelBarImage.enabled = false; // Ocultar la barra cuando el bidón esté lleno
+            spriteRenderer.sprite = fullSprite; // Cambiar el sprite al bidón lleno
+        }
+        if (IsEmpty()) 
+        {
+            fuelBarImage.enabled = true; // Ocultar la barra cuando el bidón esté lleno
+            spriteRenderer.sprite = normalSprite; // Cambiar el sprite al bidón lleno
         }
     }
 
@@ -100,30 +106,30 @@ public class BidonComb : MonoBehaviour
             return;
         }
 
-        // Crear el GameObject para la barra de combustible
-        fuelBar = new GameObject("FuelBar");
-        fuelBarRect = fuelBar.AddComponent<RectTransform>();
-        fuelBar.transform.SetParent(targetCanvas.transform);
+        // Crear una imagen directamente como barra de combustible en el canvas
+        GameObject fuelBarObject = new GameObject("FuelBar", typeof(RectTransform));
+        fuelBarObject.transform.SetParent(targetCanvas.transform);
 
-        // Ajustar las propiedades de RectTransform
-        fuelBarRect.sizeDelta = new Vector2(1000 * (fillAmount / maxCapacity), 10); // Ancho de 50 cuando el bidón está lleno
+        // Configuración de RectTransform para la barra
+        fuelBarRect = fuelBarObject.GetComponent<RectTransform>();
+        fuelBarRect.sizeDelta = new Vector2(0, 3); // Inicializar con ancho 0, que crecerá al agregar combustible
         fuelBarRect.anchorMin = new Vector2(0.5f, 0f); // Ajustar para que esté debajo del objeto del bidón
         fuelBarRect.anchorMax = new Vector2(0.5f, 0f);
         fuelBarRect.pivot = new Vector2(0.5f, 1f);
-        fuelBarRect.position = Camera.main.WorldToScreenPoint(transform.position) + new Vector3(0, -20, 0); // Posición bajo el objeto
+        fuelBarRect.position = Camera.main.WorldToScreenPoint(transform.position) + new Vector3(0, -35, 0); // Posición bajo el objeto
 
-        // Añadir un componente Image y ajustar su color inicial a verde
-        fuelBarImage = fuelBar.AddComponent<Image>();
+        // Añadir componente Image y color inicial verde
+        fuelBarImage = fuelBarObject.AddComponent<Image>();
         fuelBarImage.color = Color.green;
     }
 
     // Método para actualizar el tamaño de la barra de combustible
     private void UpdateFuelBar()
     {
-        if (fuelBarRect != null && fuelBarImage != null && fuelBar.activeSelf)
+        if (fuelBarRect != null && fuelBarImage != null && fuelBarImage.enabled)
         {
-            // Ajusta el tamaño de la barra de combustible según el fillAmount
-            fuelBarRect.sizeDelta = new Vector2(800 * (fillAmount / maxCapacity), 10); // Ancho máximo de 50
+            // Ajustar el tamaño de la barra en función del fillAmount
+            fuelBarRect.sizeDelta = new Vector2(100 * (fillAmount / maxCapacity), 40); // Ancho máximo de 800
             fuelBarRect.position = Camera.main.WorldToScreenPoint(transform.position) + new Vector3(0, -20, 0); // Actualiza la posición
         }
     }

@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Armor mid
   prefab: {fileID: 8862758157537805280, guid: eb31e70ef2a52254da287fa0b97b59e0, type: 3}
-  valor: 10
+  valor: 15
+  isConsumable: 0

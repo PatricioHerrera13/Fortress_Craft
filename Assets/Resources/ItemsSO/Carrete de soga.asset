@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Carrete de soga
   prefab: {fileID: 1540897200178562425, guid: fa8fcbf1b894924408ade01396b070c8, type: 3}
-  valor: 10
+  valor: 8
   isConsumable: 0

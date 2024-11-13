@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5501a1809dd54e941bb391e4fcfb2eb5, type: 3}
   m_Name: CRISOL IRON
   m_EditorClassIdentifier: 
-  sprite: {fileID: 21300000, guid: 2a08f74b9e359214b827b3041ecfa03a, type: 3}
+  sprite: {fileID: 21300000, guid: cf195161486932c449f3627ac8b7372e, type: 3}
   inputItemSOList:
   - {fileID: 11400000, guid: 2954964dca551fd47bec7a9e22ea801e, type: 2}
   - {fileID: 11400000, guid: 4b47c51815e70bd4eaf96179749e1b73, type: 2}
   outputItemSO: {fileID: 11400000, guid: 702866cfd1ba5b3469317d91b699da71, type: 2}
-  craftingTime: 10
-  requiredPulses: 0
+  craftingTime: 20
+  requiredPulses: 25

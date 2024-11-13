@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class Torreta : MonoBehaviour
 {
     public Collider zonaRecarga;
-    public float tiempoEntreDisparos = 0.5f;
+    public float tiempoEntreDisparos = 1f;
     public GameObject proyectil;
     public Transform puntoDisparo;
     public float fuerzaDisparo = 20f;
@@ -14,16 +14,35 @@ public class Torreta : MonoBehaviour
     public int municionActual = 0;
     public int maximoMunicion = 50;
     public int limiteRecarga = 30;
-    public int municionPorPrefab = 10;
+    public int municionPorPrefab = 5;
 
     public Image barraMunicion;
     public float anchoMaximoBarra = 200f;
 
     private bool enZonaRecarga = false;
-    private bool disparando = false;
+    public bool disparando = false;
+
+    public Animator torretaAnimator;
 
     private void Start()
     {
+        if (torretaAnimator == null)
+        {
+            torretaAnimator = GetComponentInChildren<Animator>();
+            if (torretaAnimator == null)
+            {
+                Debug.LogWarning("No se encontró el Animator en el objeto ni en sus hijos.");
+            }
+            else
+            {
+                Debug.Log("Animator encontrado y asignado correctamente.");
+            }
+        }
+        else
+        {
+            Debug.Log("Animator correctamente.");
+        }
+
         Debug.Log("Torreta lista para disparar.");
         ActualizarBarraMunicion();
     }
@@ -55,6 +74,7 @@ public class Torreta : MonoBehaviour
 
         if (municionActual > 0 && !disparando)
         {
+            Debug.Log("Iniciando disparo automático...");
             StartCoroutine(DispararAutomaticamente());
         }
     }
@@ -178,6 +198,12 @@ public class Torreta : MonoBehaviour
     {
         disparando = true;
 
+        if (torretaAnimator != null)
+        {
+            torretaAnimator.SetBool("isFiring", true);
+            Debug.Log("Animator isFiring activado.");
+        }
+
         while (municionActual > 0)
         {
             Debug.Log("Disparando proyectil automáticamente...");
@@ -185,10 +211,12 @@ public class Torreta : MonoBehaviour
             ActualizarBarraMunicion();
 
             GameObject proyectilInstanciado = Instantiate(proyectil, puntoDisparo.position, puntoDisparo.rotation);
-            SpriteRenderer renderer = proyectilInstanciado.GetComponent<SpriteRenderer>();
-            if (renderer != null)
+
+            // Desactivar el SpriteRenderer del proyectil
+            SpriteRenderer spriteRenderer = proyectilInstanciado.GetComponent<SpriteRenderer>();
+            if (spriteRenderer != null)
             {
-                renderer.enabled = false;
+                spriteRenderer.enabled = false;
             }
 
             Rigidbody rb = proyectilInstanciado.GetComponent<Rigidbody>();
@@ -201,5 +229,11 @@ public class Torreta : MonoBehaviour
         }
 
         disparando = false;
+
+        if (torretaAnimator != null)
+        {
+            torretaAnimator.SetBool("isFiring", false);
+            Debug.Log("Animator isFiring desactivado.");
+        }
     }
 }

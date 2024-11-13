@@ -5,14 +5,17 @@ public class Tienda : MonoBehaviour
 {
     public Canvas tiendaCanvas;
     public Image objetoImagen;
-    public Text nombreObjetoText;
+    public Text precio;
+    
     public Sprite[] objetosDisponibles;
     public GameObject[] prefabsDisponibles; // Lista de prefabs disponibles para comprar
+    public ItemSO[] itemsSO;
     public Transform spawnPoint; // Nuevo transform designado para el objeto comprado
     private int indiceActual = 0;
     private bool tiendaAbierta = false;
     private bool jugadorEnRango = false;
     private MonoBehaviour jugadorActualScript; // Referencia al script del jugador actual
+    public Wallet wallet; // Referencia al Wallet1
 
     private void Start()
     {
@@ -21,7 +24,7 @@ public class Tienda : MonoBehaviour
 
     private void Update()
     {
-        if (jugadorEnRango && Input.GetKeyDown(KeyCode.E))
+        if (jugadorEnRango && (Input.GetKeyDown(KeyCode.I) || Input.GetKeyDown(KeyCode.X)))
         {
             if (!tiendaAbierta)
             {
@@ -45,19 +48,8 @@ public class Tienda : MonoBehaviour
                 CambiarObjeto(-1);
             }
 
-            
-            if ((jugadorActualScript is PlayerVS1 && Input.GetKeyDown(KeyCode.D)))
-            {
-                CambiarObjeto(1);
-            }
-            else if ((jugadorActualScript is PlayerVS1 && Input.GetKeyDown(KeyCode.A)))
-            {
-                CambiarObjeto(-1);
-            }
-
-
             // Si el jugador presiona espacio, "comprar" el objeto
-            if (Input.GetKeyDown(KeyCode.Space))
+            if ((jugadorActualScript is Player && Input.GetKeyDown(KeyCode.C)) || (jugadorActualScript is Player2 && Input.GetKeyDown(KeyCode.O)))
             {
                 ComprarObjeto();
             }
@@ -68,9 +60,23 @@ public class Tienda : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            jugadorActualScript = other.GetComponent<Player>();
+            var playerScript = other.GetComponent<Player>();
+            if (playerScript != null)
+            {
+                jugadorActualScript = playerScript;
+                Debug.Log("El jugador que entró es de tipo Player.");
+            }
+            else
+            {
+                var player2Script = other.GetComponent<Player2>();
+                if (player2Script != null)
+                {
+                    jugadorActualScript = player2Script;
+                    Debug.Log("El jugador que entró es de tipo Player2.");
+                }
+            }
+        
             jugadorEnRango = true;
-            //Debug.Log("Jugador entró en rango de la tienda.");
         }
     }
 
@@ -79,7 +85,6 @@ public class Tienda : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             jugadorEnRango = false;
-            //Debug.Log("Jugador salió del rango de la tienda.");
         }
     }
 
@@ -87,15 +92,11 @@ public class Tienda : MonoBehaviour
     {
         tiendaAbierta = true;
         tiendaCanvas.gameObject.SetActive(true);
-        MostrarObjetoActual();
-
-        // Desactivar movimiento del jugador actual
         if (jugadorActualScript != null)
         {
             jugadorActualScript.enabled = false;
         }
-
-        //Debug.Log("Tienda abierta.");
+        MostrarObjetoActual();
     }
 
     private void CerrarTienda()
@@ -103,47 +104,65 @@ public class Tienda : MonoBehaviour
         tiendaAbierta = false;
         tiendaCanvas.gameObject.SetActive(false);
 
-        // Reactivar movimiento del jugador actual
         if (jugadorActualScript != null)
         {
             jugadorActualScript.enabled = true;
         }
-
-        //Debug.Log("Tienda cerrada.");
     }
 
     private void CambiarObjeto(int cambio)
     {
         indiceActual = (indiceActual + cambio + objetosDisponibles.Length) % objetosDisponibles.Length;
         MostrarObjetoActual();
+        Debug.Log("Objeto cambiado a índice: " + indiceActual);
     }
 
     private void MostrarObjetoActual()
     {
-        if (objetosDisponibles.Length > 0)
+        // Verificar que los índices estén dentro de rango y los arrays tengan contenido
+        if (objetosDisponibles.Length > 0 && itemsSO.Length > 0 && indiceActual < objetosDisponibles.Length && indiceActual < itemsSO.Length)
         {
             Sprite objetoActual = objetosDisponibles[indiceActual];
+            ItemSO itemActualSO = itemsSO[indiceActual];
+
             objetoImagen.sprite = objetoActual;
-            nombreObjetoText.text = objetoActual.name;
-            //Debug.Log("Mostrando objeto: " + objetoActual.name);
+            precio.text = "$" + itemActualSO.valor.ToString("F2");
+
+            Debug.Log("Mostrando objeto: " + itemActualSO.itemName + " con precio: $" + itemActualSO.valor);
+        }
+        else
+        {
+            Debug.LogError("Error al mostrar el objeto: Verifica que los arrays objetosDisponibles y itemsSO están correctamente configurados y tienen contenido.");
         }
     }
 
     private void ComprarObjeto()
     {
-        if (indiceActual < prefabsDisponibles.Length)
+        if (indiceActual < itemsSO.Length) // Verifica que el índice esté dentro del rango de itemsSO
         {
-            if (spawnPoint != null)
+            ItemSO itemActualSO = itemsSO[indiceActual];
+            float precioObjeto = itemActualSO.valor;
+
+            if (wallet.GetMoney() >= precioObjeto)
             {
-                GameObject objetoComprado = Instantiate(prefabsDisponibles[indiceActual], spawnPoint.position, Quaternion.identity);
-                objetoComprado.transform.SetParent(spawnPoint); // Asignar el objeto al transform designado
-                
-                CerrarTienda(); // Cerrar la tienda después de comprar
-                //Debug.Log("Objeto comprado: " + prefabsDisponibles[indiceActual].name);
+                wallet.DeductFromWallet(precioObjeto);
+
+                if (indiceActual < prefabsDisponibles.Length && spawnPoint != null)
+                {
+                    GameObject objetoComprado = Instantiate(prefabsDisponibles[indiceActual], spawnPoint.position, Quaternion.identity);
+                    objetoComprado.transform.SetParent(spawnPoint);
+
+                    Debug.Log("Objeto comprado: " + itemActualSO.itemName);
+                    CerrarTienda();
+                }
+                else
+                {
+                    Debug.LogError("No se ha asignado un spawnPoint o prefabsDisponibles no contiene el objeto.");
+                }
             }
             else
             {
-                //Debug.LogError("No se ha asignado un spawnPoint para el objeto comprado.");
+                Debug.Log("No tienes suficiente dinero para comprar este objeto.");
             }
         }
     }

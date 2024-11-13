@@ -5,10 +5,13 @@ using UnityEngine;
 public class Dispenser : MonoBehaviour
 {
     [SerializeField] private GameObject itemToDispensePrefab; // Ítem que el dispensador va a expulsar
+    [SerializeField] private float cooldownTime = 1f; // Tiempo de enfriamiento en segundos, editable en el Inspector
+    private bool isCoolingDown = false; // Flag para verificar si está en enfriamiento
 
-    public void Interact(MonoBehaviour player )
+    // Método que se llama cuando el jugador interactúa con el dispensador
+    public void Interact(MonoBehaviour player)
     {
-        // Verifica que el jugador tenga el método GetPickedItemType
+        // Verifica que el jugador tenga el método GetPickedItemType y GrabItemFromDispenser
         var pickedItemTypeMethod = player.GetType().GetMethod("GetPickedItemType");
         var grabItemMethod = player.GetType().GetMethod("GrabItemFromDispenser");
 
@@ -16,14 +19,22 @@ public class Dispenser : MonoBehaviour
         {
             string pickedItemType = (string)pickedItemTypeMethod.Invoke(player, null);
             
-            if (pickedItemType == "")
+            // Verifica si el jugador no tiene un ítem y si no está en enfriamiento
+            if (pickedItemType == "" && !isCoolingDown)
             {
                 Item newItem = CreateItem();
                 if (newItem != null)
                 {
                     grabItemMethod.Invoke(player, new object[] { newItem });
                     Debug.Log($"Dispensed: {newItem.name}");
+
+                    // Inicia el enfriamiento
+                    StartCoroutine(StartCooldown());
                 }
+            }
+            else if (isCoolingDown)
+            {
+                Debug.Log("El dispensador está en enfriamiento. Espera un poco.");
             }
             else
             {
@@ -36,6 +47,7 @@ public class Dispenser : MonoBehaviour
         }
     }
 
+    // Crea el ítem a ser dispensado
     private Item CreateItem()
     {
         if (itemToDispensePrefab == null)
@@ -46,5 +58,14 @@ public class Dispenser : MonoBehaviour
 
         GameObject newItem = Instantiate(itemToDispensePrefab, transform.position, Quaternion.identity);
         return newItem.GetComponent<Item>();
+    }
+
+    // Coroutine para manejar el tiempo de enfriamiento
+    private IEnumerator StartCooldown()
+    {
+        isCoolingDown = true; // Establece el estado de enfriamiento a verdadero
+        yield return new WaitForSeconds(cooldownTime); // Espera el tiempo de enfriamiento configurado
+        isCoolingDown = false; // Finaliza el enfriamiento
+        Debug.Log("El dispensador ya está listo para usar.");
     }
 }

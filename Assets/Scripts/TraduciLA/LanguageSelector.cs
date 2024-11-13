@@ -37,7 +37,7 @@ public class LanguageSelector : MonoBehaviour
     void UpdateMenuText()
     {
         // Aquí actualizas los textos de la UI con las traducciones obtenidas
-        jugarButton.text = LanguageManager.Instance.GetPhrase("Jugar");
+        jugarButton.text = LanguageManager.Instance.GetPhrase("JUGAR");
         //opcionesButton.text = LanguageManager.Instance.GetPhrase("Controles");
         Debug.Log("Deberia actualizar el texto");
         

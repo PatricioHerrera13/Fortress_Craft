@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Latigo
   prefab: {fileID: 5462222989748448555, guid: 9412f4941c64d8f48b3ec5ac6895db4b, type: 3}
-  valor: 10
+  valor: 12
   isConsumable: 0

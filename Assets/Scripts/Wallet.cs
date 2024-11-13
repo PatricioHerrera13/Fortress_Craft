@@ -1,48 +1,77 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Wallet : MonoBehaviour // Asegúrate de que Wallet herede de MonoBehaviour
+public class Wallet : MonoBehaviour
 {
-    public Text textoMoney; // Hacerlo privado y establecerlo a través de un método
+    public Text textoMoney;
     private float money;
+
+    private void Start()
+    {
+        // Cargar el valor de money desde PlayerPrefs al iniciar
+        money = PlayerPrefs.GetFloat("Money", 0);
+        Debug.Log("Valor inicial de dinero: " + money);
+        UpdateUI();
+    }
 
     public void AddMoney(float amount)
     {
-        money += amount;
-        Debug.Log("Dinero añadido: " + amount + ". Total: " + money.ToString("F2")); // Mensaje de depuración
-        UpdateUI(); // Actualiza la UI después de añadir dinero
+        if (amount > 0)
+        {
+            money += amount;
+            GuardarDinero();
+            Debug.Log("Dinero añadido: " + amount + ". Total: " + money.ToString());
+            UpdateUI();
+        }
+        else
+        {
+            Debug.LogWarning("Intento de añadir una cantidad negativa: " + amount);
+        }
     }
 
-    public void DeductFromWallet(float amount) // Método para descontar dinero de la billetera
+    public void DeductFromWallet(float rest)
     {
-        money -= amount; // Permitir que money sea negativo
-        Debug.Log("Dinero descontado: " + amount + ". Total: " + money.ToString("F2")); // Mensaje de depuración
-        UpdateUI(); // Actualiza la UI después de descontar
+        if (rest > 0)
+        {
+            money -= rest;
+            GuardarDinero();
+            Debug.Log("Dinero descontado: " + rest + ". Total: " + money.ToString());
+            UpdateUI();
+        }
+        else
+        {
+            Debug.LogWarning("Intento de restar una cantidad negativa: " + rest);
+        }
+    }
+
+    private void GuardarDinero()
+    {
+        PlayerPrefs.SetFloat("Money", money);
+        PlayerPrefs.Save(); // Llamada explícita para guardar PlayerPrefs inmediatamente
     }
 
     public float GetMoney()
     {
+        Debug.Log("Obteniendo dinero: " + money.ToString());
         return money;
     }
 
-    // Método para asignar el Text desde otro script
     public void SetTextComponent(Text newText)
     {
         textoMoney = newText;
-        UpdateUI(); // Actualizar el texto en la UI cuando se asigne el componente
+        UpdateUI();
     }
 
-    // Método para actualizar el texto cuando se inicializa o cambia la referencia
     private void UpdateUI()
     {
         if (textoMoney != null)
         {
-            textoMoney.text = money.ToString("F2"); // Actualiza el texto con el nuevo valor
-            Debug.Log("Texto de dinero actualizado: " + money.ToString("F2")); // Mensaje de depuración
+            textoMoney.text = money.ToString("");
+            Debug.Log("Texto de dinero actualizado: " + textoMoney.text);
         }
         else
         {
-            Debug.LogWarning("El componente de texto no está asignado."); // Mensaje de advertencia si no hay texto asignado
+            Debug.LogWarning("El componente de texto no está asignado.");
         }
     }
 }

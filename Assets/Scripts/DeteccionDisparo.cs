@@ -20,8 +20,29 @@ public class DeteccionDisparo : MonoBehaviour
     private bool haDisparado = false;  // Flag para evitar múltiples disparos
     private bool enZonaRecarga = false;  // Flag para saber si el jugador está en la zona
 
+    public Animator canonAnimator;
+
+
     void Start()
     {
+
+        if (canonAnimator == null)
+        {
+            canonAnimator = GetComponentInChildren<Animator>();
+            if (canonAnimator == null)
+            {
+                Debug.LogWarning("No se encontró el Animator en el objeto ni en sus hijos.");
+            }
+            else
+            {
+                Debug.Log("Animator encontrado y asignado correctamente.");
+            }
+        }
+        else
+        {
+            Debug.Log("Animator correctamente.");
+        }
+
         Debug.Log("Pos. Inicial Lista para Cañón 1");
         posInicialCañon = cañon1.transform.position;
     }
@@ -116,6 +137,12 @@ public class DeteccionDisparo : MonoBehaviour
             yield return null;
         }
 
+        if (canonAnimator != null)
+        {
+            canonAnimator.SetBool("canon", true);
+            Debug.Log("Animator canon activado.");
+        }
+
         Debug.Log("Pausa...");
         // Pausa en la posición de disparo
         yield return new WaitForSeconds(0.5f);
@@ -142,6 +169,11 @@ public class DeteccionDisparo : MonoBehaviour
         GameObject proyectilInstanciado = Instantiate(proyectil, puntoDisparo.position, puntoDisparo.rotation);
         Rigidbody rb = proyectilInstanciado.GetComponent<Rigidbody>();
         
+        if (canonAnimator != null)
+        {
+            canonAnimator.SetBool("canon", false);
+            Debug.Log("Animator canon desactivado.");
+        }
 
         if (rb != null)
         {

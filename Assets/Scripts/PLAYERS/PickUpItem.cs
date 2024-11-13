@@ -5,7 +5,7 @@ using UnityEngine;
 public class PickUpItem : MonoBehaviour
 {
     public GameObject Hand; // Referencia al objeto Hand
-    private GameObject pickedItem = null; // El ítem que se está sosteniendo
+    public GameObject pickedItem = null; // El ítem que se está sosteniendo
 
     public string pickedItemType = ""; // Tipo de ítem que se está sosteniendo
     public float throwForce = 15f;
@@ -52,7 +52,7 @@ public class PickUpItem : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.X))
         {
             StartTimer = true;
-            StartCoroutine(HoldTimer());
+            
         }
 
         if (Input.GetKeyUp(KeyCode.X))
@@ -64,20 +64,7 @@ public class PickUpItem : MonoBehaviour
         TryInteractWithDispenser();
     }
 
-    IEnumerator HoldTimer()
-    {
-        Debug.Log("Empezó Timer!");
-        yield return new WaitForSeconds(HoldTime);
-        if (!StartTimer)
-        {
-            Debug.Log("No se pudo");
-        }
-        else
-        {
-            Debug.Log("Lanzamiento!");
-            //ThrowItem();
-        }
-    }
+    
 
     private void DetectMovement()
     {

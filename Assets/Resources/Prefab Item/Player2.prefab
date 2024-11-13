@@ -181,7 +181,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 21300000, guid: ee6ad42e76c8c9646a4ddbd7c4e12d46, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -257,6 +257,7 @@ MonoBehaviour:
   hand: {fileID: 8712165882039150185}
   handpoint: {fileID: 6016869537526518227}
   handOffsetDistance: 1.8
+  anim: {fileID: 0}
 --- !u!1 &9090974489998485028
 GameObject:
   m_ObjectHideFlags: 0

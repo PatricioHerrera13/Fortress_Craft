@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: block stone
   prefab: {fileID: 1276525612703151040, guid: f5a821d4a8cc7bc4bb702b8b3e0f1335, type: 3}
-  valor: 2
+  valor: 4
   isConsumable: 0

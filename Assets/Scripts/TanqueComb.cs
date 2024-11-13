@@ -19,7 +19,10 @@ public class TanqueComb : MonoBehaviour
     public Canvas targetCanvas;
     public GameObject fuelBar;
     private RectTransform fuelBarRect;
-    public Vector3 fuelBarOffset = new Vector3(-235, -610, 0);
+    public Sprite bidonLLeno;
+
+    public RectTransform imagenCombustible; // Imagen a la que se ajustará la barra de combustible
+    public Vector3 offsetBarra = new Vector3(0, 0, 0); // Ajuste de posición para la barra al lado de la imagen
 
     private bool isQTEActive = false;
     private bool playerInRange = false;
@@ -32,7 +35,7 @@ public class TanqueComb : MonoBehaviour
             Debug.LogError("Fuel bar image no asignada en el inspector.");
             return;
         }
-    
+
         fuelBarRect = fuelBar.GetComponent<RectTransform>(); // Obtén el RectTransform de la barra de progreso
         fuelBar.gameObject.SetActive(false); // Activa la barra si está desactivada inicialmente
         UpdateFuelBar(); // Inicializa el tamaño de la barra
@@ -43,7 +46,7 @@ public class TanqueComb : MonoBehaviour
     {
         if (currentFuel > 0)
         {
-            currentFuel = Mathf.Max(0, currentFuel - 0.01f * Time.deltaTime);
+            currentFuel = Mathf.Max(0, currentFuel - 0.02f * Time.deltaTime);
         }
 
         UpdateFuelBar();
@@ -133,6 +136,7 @@ public class TanqueComb : MonoBehaviour
     public void CompleteQTE(bool success)
     {
         float fuelToTransfer = success ? Bidon.GetCurrentFuel() : Bidon.GetCurrentFuel() / 2;
+        
         TransferFuel(fuelToTransfer);
         fuelBar.gameObject.SetActive(true);
 
@@ -164,16 +168,14 @@ public class TanqueComb : MonoBehaviour
     {
         if (fuelBarRect != null)
         {
-            
             // Ajustar el ancho de la barra en función del combustible actual
             fuelBarRect.sizeDelta = new Vector2(800 * (currentFuel / maxCapacity), 100); // Ancho máximo de 800
 
-            // Ajustar la posición de la barra con el offset personalizable
-            fuelBarRect.position = Camera.main.WorldToScreenPoint(transform.position) + fuelBarOffset;
+            // Posiciona la barra relativa a la imagen y el offset
+            fuelBarRect.position = imagenCombustible.position + offsetBarra;
         }
-        if(currentFuel <= 0)
-        {
-            fuelBar.gameObject.SetActive(false);
-        }
+        
+        // Activa o desactiva la barra según el nivel de combustible
+        fuelBar.gameObject.SetActive(currentFuel > 0);
     }
 }

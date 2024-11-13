@@ -14,4 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: Armor leather
   prefab: {fileID: 8862758157537805280, guid: 5e895212d0cb7814cb6789fbfc3d9e07, type: 3}
-  valor: 5
+  valor: 10
+  isConsumable: 0

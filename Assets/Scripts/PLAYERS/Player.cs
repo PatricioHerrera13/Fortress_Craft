@@ -20,8 +20,11 @@ public class Player : MonoBehaviour
     public Transform hand; // Referencia al objeto Hand
     public Transform handpoint;
     public float handOffsetDistance = 1f; // Distancia de la mano desde el jugador
+    
 
-    private void Awake()
+    public Animator anim;
+
+    public void Awake()
     {
         rb = GetComponent<Rigidbody>();
     }
@@ -30,6 +33,7 @@ public class Player : MonoBehaviour
     {
         wallet = new Wallet();
         wallet.SetTextComponent(moneyText);
+        anim = GetComponent<Animator>();
     }
 
     public void AddMoneyToWallet(float amount)
@@ -51,23 +55,30 @@ public class Player : MonoBehaviour
             // Movimiento utilizando las flechas del teclado
             float moveHorizontal = 0f;
             float moveVertical = 0f;
+            anim.SetFloat("MOVEy", moveVertical);
+            anim.SetFloat("MOVEX", moveHorizontal);
 
             if (Input.GetKey(KeyCode.A))
             {
                 moveHorizontal = -1f; // Mover hacia la izquierda
+                anim.SetFloat("MOVEX", moveHorizontal);
             }
             else if (Input.GetKey(KeyCode.D))
             {
                 moveHorizontal = 1f; // Mover hacia la derecha
+                anim.SetFloat("MOVEX", moveHorizontal);
             }
 
             if (Input.GetKey(KeyCode.W))
             {
                 moveVertical = 1f; // Mover hacia adelante
+                anim.SetFloat("MOVEy", moveVertical);
             }
             else if (Input.GetKey(KeyCode.S))
             {
                 moveVertical = -1f; // Mover hacia atrás
+                anim.SetFloat("MOVEy", moveVertical);
+                
             }
 
             Vector3 movement = new Vector3(moveHorizontal, 0, moveVertical).normalized;
@@ -97,29 +108,11 @@ public class Player : MonoBehaviour
                 hand.rotation = Quaternion.LookRotation(-lastMovementDirection);
             }
 
-            // Dash
-            if (Input.GetKeyDown(KeyCode.V) && dashCooldownTimer <= 0)
-            {
-                StartCoroutine(Dash(lastMovementDirection));
-            }
+            
         }
     }
 
-    private IEnumerator Dash(Vector3 direction)
-    {
-        isDashing = true;
-
-        // Aumenta la velocidad durante el dash
-        rb.velocity = direction.normalized * dashSpeed;
-
-        yield return new WaitForSeconds(dashDuration);
-
-        // Vuelve a la velocidad normal
-        isDashing = false;
-
-        // Reiniciar el cooldown
-        dashCooldownTimer = dashCooldown;
-    }
+    
 
     public bool TienePrefabConSprite(Sprite spriteEsperado)
     {

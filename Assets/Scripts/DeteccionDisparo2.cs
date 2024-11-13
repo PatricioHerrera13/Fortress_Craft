@@ -20,8 +20,27 @@ public class DeteccionDisparo2 : MonoBehaviour
     private bool haDisparado = false;  // Flag para evitar múltiples disparos
     private bool enZonaRecarga = false;  // Flag para saber si el jugador está en la zona
 
+    public Animator canonAnimator;
+
     void Start()
     {
+        if (canonAnimator == null)
+        {
+            canonAnimator = GetComponentInChildren<Animator>();
+            if (canonAnimator == null)
+            {
+                Debug.LogWarning("No se encontró el Animator en el objeto ni en sus hijos.");
+            }
+            else
+            {
+                Debug.Log("Animator encontrado y asignado correctamente.");
+            }
+        }
+        else
+        {
+            Debug.Log("Animator correctamente.");
+        }
+
         Debug.Log("Pos. Inicial Lista para Cañón 1");
         posInicialCañon = cañon2.transform.position;
     }
@@ -115,12 +134,18 @@ public class DeteccionDisparo2 : MonoBehaviour
             yield return null;
         }
 
+        if (canonAnimator != null)
+        {
+            canonAnimator.SetBool("canon", true);
+            Debug.Log("Animator canon activado.");
+        }
         Debug.Log("Pausa...");
         // Pausa en la posición de disparo
         yield return new WaitForSeconds(0.5f);
 
         // Instanciar el proyectil en la punta del cañón
         DispararProyectil(puntoDisparo, direccionDisparo);
+        
 
         // Movimiento hacia adelante (rápido)
         tiempo = 0f;
@@ -137,9 +162,16 @@ public class DeteccionDisparo2 : MonoBehaviour
 
     void DispararProyectil(Transform puntoDisparo, Vector3 direccionDisparo)
     {
-        Debug.Log("Disparando proyectil...");
+        
+
         GameObject proyectilInstanciado = Instantiate(proyectil, puntoDisparo.position, puntoDisparo.rotation);
         Rigidbody rb = proyectilInstanciado.GetComponent<Rigidbody>();
+
+        if (canonAnimator != null)
+        {
+            canonAnimator.SetBool("canon", false);
+            Debug.Log("Animator canon desactivado.");
+        }
 
         if (rb != null)
         {

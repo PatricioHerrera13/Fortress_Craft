@@ -5,7 +5,7 @@ using UnityEngine;
 public class PickUpItem2 : MonoBehaviour
 {
     public GameObject Hand; // Referencia al objeto Hand
-    private GameObject pickedItem = null;
+    public GameObject pickedItem = null;
 
     public string pickedItemType = ""; // Tipo de ítem que se está sosteniendo
     public float throwForce = 15f;
