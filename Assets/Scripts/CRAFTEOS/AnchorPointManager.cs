@@ -8,6 +8,10 @@ public class AnchorPointManager : MonoBehaviour
     [SerializeField] private BoxCollider detectionCollider; // Collider para detectar ítems
     [SerializeField] private List<Vector3> anchorPositions; // Posiciones personalizadas para los puntos de anclaje
 
+    // Nueva variable para manejar el mismo sonido
+    public AudioSource audioSource; // AudioSource para reproducir sonidos
+    public AudioClip sfxItemAction; // Sonido para cuando un ítem es anclado o liberado
+    
     private List<Transform> anchorPoints = new List<Transform>();
     private List<bool> anchorOccupied; // Estado de ocupación de cada punto de anclaje
 
@@ -101,6 +105,18 @@ public class AnchorPointManager : MonoBehaviour
             {
                 anchorOccupied[anchorIndex] = false; // Marcar como disponible
             }
+
+            // Reproducir el mismo sonido de acción (anclado o liberado)
+            PlayItemActionSound();
+        }
+    }
+    
+    // Método para reproducir el sonido de acción (anclado o liberado)
+    private void PlayItemActionSound()
+    {
+        if (sfxItemAction != null && audioSource != null)
+        {
+            audioSource.PlayOneShot(sfxItemAction);
         }
     }
 }

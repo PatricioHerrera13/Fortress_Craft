@@ -29,7 +29,10 @@ public class OrderManager : MonoBehaviour
     public bool fase3 = false;
     public bool fase4 = false;
 
-    //public float rest = 1f;
+    // Sonidos para la creación y la finalización de un pedido
+    public AudioClip createOrderSound;  // Sonido cuando se crea un pedido
+    public AudioClip completeOrderSound; // Sonido cuando se completa un pedido
+    public AudioSource audioSource; // El AudioSource para reproducir los sonidos
 
     private void Start()
     {
@@ -138,6 +141,10 @@ public class OrderManager : MonoBehaviour
 
                     AdjustOrderPositions();
                     FindObjectOfType<PortalDeEntregas>().ActualizarItemsRequeridos();
+
+                    // Reproducir sonido cuando se crea un pedido
+                    audioSource.PlayOneShot(createOrderSound);
+
                     break;
                 }
             }
@@ -167,6 +174,10 @@ public class OrderManager : MonoBehaviour
 
                     AdjustOrderPositions();
                     FindObjectOfType<PortalDeEntregas>().ActualizarItemsRequeridos();
+
+                    // Reproducir sonido cuando se crea un pedido
+                    audioSource.PlayOneShot(createOrderSound);
+
                     break;
                 }
             }
@@ -189,6 +200,10 @@ public class OrderManager : MonoBehaviour
 
                     AdjustOrderPositions();
                     FindObjectOfType<PortalDeEntregas>().ActualizarItemsRequeridos();
+
+                    // Reproducir sonido cuando se crea un pedido
+                    audioSource.PlayOneShot(createOrderSound);
+
                     break;
                 }
             }
@@ -224,6 +239,9 @@ public class OrderManager : MonoBehaviour
         }
 
         AdjustOrderPositions();
+        
+        // Reproducir sonido de completado de pedido
+        audioSource.PlayOneShot(completeOrderSound);
     }
 
     private void AdjustOrderPositions()

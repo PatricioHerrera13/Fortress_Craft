@@ -13,5 +13,6 @@ MonoBehaviour:
   m_Name: Sword stone
   m_EditorClassIdentifier: 
   itemName: Sword stone
-  prefab: {fileID: 2735165643963833294, guid: 47a901c9a0300d749aef6b349b94b592, type: 3}
+  prefab: {fileID: 8432341440714187622, guid: 4aebeb8407536664f97a0f86f032fdc0, type: 3}
   valor: 20
+  isConsumable: 0

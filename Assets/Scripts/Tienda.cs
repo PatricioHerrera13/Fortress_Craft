@@ -17,6 +17,12 @@ public class Tienda : MonoBehaviour
     private MonoBehaviour jugadorActualScript; // Referencia al script del jugador actual
     public Wallet wallet; // Referencia al Wallet1
 
+    // Variables para los sonidos
+    public AudioSource audioSource;          // AudioSource para reproducir los sonidos
+    public AudioClip abrirTiendaClip;        // Sonido para abrir la tienda
+    public AudioClip cambiarObjetoClip;      // Sonido para cambiar entre objetos
+    public AudioClip comprarObjetoClip;      // Sonido para comprar un objeto
+
     private void Start()
     {
         tiendaCanvas.gameObject.SetActive(false); // La tienda comienza cerrada
@@ -97,6 +103,11 @@ public class Tienda : MonoBehaviour
             jugadorActualScript.enabled = false;
         }
         MostrarObjetoActual();
+        // Reproducir sonido al abrir la tienda
+        if (audioSource != null && abrirTiendaClip != null)
+        {
+            audioSource.PlayOneShot(abrirTiendaClip);
+        }
     }
 
     private void CerrarTienda()
@@ -115,6 +126,12 @@ public class Tienda : MonoBehaviour
         indiceActual = (indiceActual + cambio + objetosDisponibles.Length) % objetosDisponibles.Length;
         MostrarObjetoActual();
         Debug.Log("Objeto cambiado a índice: " + indiceActual);
+
+        // Reproducir sonido al cambiar de objeto
+        if (audioSource != null && cambiarObjetoClip != null)
+        {
+            audioSource.PlayOneShot(cambiarObjetoClip);
+        }
     }
 
     private void MostrarObjetoActual()
@@ -153,6 +170,11 @@ public class Tienda : MonoBehaviour
                     objetoComprado.transform.SetParent(spawnPoint);
 
                     Debug.Log("Objeto comprado: " + itemActualSO.itemName);
+                    // Reproducir sonido al comprar el objeto
+                    if (audioSource != null && comprarObjetoClip != null)
+                    {
+                        audioSource.PlayOneShot(comprarObjetoClip);
+                    }
                     CerrarTienda();
                 }
                 else

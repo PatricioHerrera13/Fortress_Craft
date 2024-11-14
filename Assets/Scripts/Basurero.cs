@@ -6,6 +6,10 @@ public class Basurero : MonoBehaviour
     public Collider jugadorCollider; // Collider del jugador 1
     public Collider jugadorCollider1; // Collider del jugador 2
 
+    // Variable para manejar el efecto de sonido al eliminar un ítem
+    public AudioSource audioSource; // El AudioSource que reproducirá el sonido
+    public AudioClip sfxEliminarItem; // Sonido para cuando se elimina un ítem
+
     private void OnTriggerStay(Collider other)
     {
         // Verificar si el objeto que está dentro del trigger es el jugador 1 o el jugador 2
@@ -48,6 +52,11 @@ public class Basurero : MonoBehaviour
             Destroy(hand.GetChild(0).gameObject);
             playerPickUp.ReleaseItem(); // Llamar a ReleaseItem para liberar el ítem
             Debug.Log("¡Objeto eliminado en el basurero para el jugador 1!");
+            // Reproducir el efecto de sonido para eliminar un ítem
+            if (sfxEliminarItem != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(sfxEliminarItem);
+            }
         }
     }
 
@@ -60,6 +69,11 @@ public class Basurero : MonoBehaviour
             Destroy(hand.GetChild(0).gameObject);
             playerPickUp2.ReleaseItem(); // Llamar a ReleaseItem para liberar el ítem
             Debug.Log("¡Objeto eliminado en el basurero para el jugador 2!");
+            // Reproducir el efecto de sonido para eliminar un ítem
+            if (sfxEliminarItem != null && audioSource != null)
+            {
+                audioSource.PlayOneShot(sfxEliminarItem);
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7944208582801332191}
   - component: {fileID: 8909464801842573522}
   m_Layer: 0
-  m_Name: Sword Stone
+  m_Name: Sword stone
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -129,7 +129,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 843320eefd5d98b459e6e70fb82d0142, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemType: Sword Stone
+  itemType: Sword stone
 --- !u!114 &8909464801842573522
 MonoBehaviour:
   m_ObjectHideFlags: 0

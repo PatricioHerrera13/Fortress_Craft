@@ -13,6 +13,12 @@ public class Tienda1 : MonoBehaviour
     public Transform spawnPoint;
     public Wallet1 wallet; // Referencia al Wallet1
 
+    // Variables para los sonidos
+    public AudioSource audioSource;           // AudioSource para reproducir los sonidos
+    public AudioClip abrirTiendaClip;         // Sonido al abrir la tienda
+    public AudioClip cambiarObjetoClip;       // Sonido al cambiar objeto
+    public AudioClip comprarObjetoClip;       // Sonido al comprar un objeto
+
     private int indiceActual = 0;
     private bool tiendaAbierta = false;
     private bool jugadorEnRango = false;
@@ -83,6 +89,11 @@ public class Tienda1 : MonoBehaviour
         {
             jugadorActualScript.enabled = false;
         }
+        // Reproducir sonido al abrir la tienda
+        if (audioSource != null && abrirTiendaClip != null)
+        {
+            audioSource.PlayOneShot(abrirTiendaClip);
+        }
     }
 
     private void CerrarTienda()
@@ -101,6 +112,11 @@ public class Tienda1 : MonoBehaviour
     {
         indiceActual = (indiceActual + cambio + objetosDisponibles.Length) % objetosDisponibles.Length;
         MostrarObjetoActual();
+        // Reproducir sonido al cambiar de objeto
+        if (audioSource != null && cambiarObjetoClip != null)
+        {
+            audioSource.PlayOneShot(cambiarObjetoClip);
+        }
     }
 
     private void MostrarObjetoActual()
@@ -135,6 +151,11 @@ public class Tienda1 : MonoBehaviour
                     objetoComprado.transform.SetParent(spawnPoint);
 
                     Debug.Log("Objeto comprado: " + itemActualSO.itemName);
+                    // Reproducir sonido al comprar el objeto
+                    if (audioSource != null && comprarObjetoClip != null)
+                    {
+                        audioSource.PlayOneShot(comprarObjetoClip);
+                    }
                     CerrarTienda();
                 }
                 else

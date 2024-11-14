@@ -21,8 +21,11 @@ public class Player : MonoBehaviour
     public Transform handpoint;
     public float handOffsetDistance = 1f; // Distancia de la mano desde el jugador
     
-
     public Animator anim;
+
+    // Variables para el sonido de paso
+    public AudioSource audioSource;          // AudioSource para reproducir los sonidos
+    public AudioClip pasoClip;               // Clip de sonido para el paso
 
     public void Awake()
     {
@@ -100,15 +103,23 @@ public class Player : MonoBehaviour
             {
                 hand.position = handTargetPosition; // Mover la mano hacia la nueva posición
                 hand.rotation = Quaternion.LookRotation(-movement); // Invertir la dirección de movimiento
+                // Activar el sonido de paso si el jugador está en movimiento
+                if (!audioSource.isPlaying) 
+                {
+                    audioSource.Play(); // Inicia el sonido si no está en reproducción
+                }
             }
             else if (lastMovementDirection != Vector3.zero)
             {
+                // Si el jugador no se está moviendo, detener el sonido
+                if (audioSource.isPlaying)
+                {
+                    audioSource.Stop(); // Detener el sonido si está en reproducción
+                }
                 // Si no hay movimiento, mantén la mano en la última dirección válida
                 hand.position = handTargetPosition; // Mover la mano hacia la última dirección
                 hand.rotation = Quaternion.LookRotation(-lastMovementDirection);
             }
-
-            
         }
     }
 

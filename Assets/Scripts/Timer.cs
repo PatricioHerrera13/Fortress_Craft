@@ -4,7 +4,24 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 public class Timer : MonoBehaviour
-{
+{   
+    public AudioSource audioSource;           // AudioSource para la música o efectos
+    public AudioSource audioSourceBola;       // AudioSource para el sonido de la bola
+    public AudioSource audioSourceDragon;     // AudioSource para el sonido del dragón
+    public AudioSource backgroundAudioSource;     // AudioSource para efectos de fondo o música ambiental
+    public AudioClip fase1Audio;              // Clip de audio para la fase 1
+    public AudioClip fase2Audio;              // Clip de audio para la fase 2
+    public AudioClip fase3Audio;              // Clip de audio para la fase 3
+    public AudioClip fase4Audio;              // Clip de audio para la fase 4
+    public AudioClip fase1BackgroundSound;        // Efecto de fondo para la fase 1
+    public AudioClip fase2BackgroundSound;        // Efecto de fondo para la fase 2
+    public AudioClip fase3BackgroundSound;        // Efecto de fondo para la fase 3
+    public AudioClip fase4BackgroundSound;        // Efecto de fondo para la fase 4
+
+    public AudioClip sonidoBola;         // Sonido para la bola
+    public AudioClip sonidoDragon;       // Sonido para el dragón
+    public AudioClip sonidoMaxBola;      // Sonido cuando la bola alcanza su tamaño máximo
+
     public float timer;
     public Text textoTimer;
     public PortalDeEntregas portal;
@@ -34,6 +51,15 @@ public class Timer : MonoBehaviour
         dragon.SetActive(false);
         bola.SetActive(false);
         TORMETA.SetActive(false);
+
+        // Iniciar con música de fase 1
+        audioSource.clip = fase1Audio;
+        audioSource.Play();
+
+         // Iniciar el audio de fondo para fase 1
+        backgroundAudioSource.clip = fase1BackgroundSound;
+        backgroundAudioSource.loop = true;  // Asegúrate de que se repita
+        backgroundAudioSource.Play();
     }
 
     void Update()
@@ -82,6 +108,12 @@ public class Timer : MonoBehaviour
         {
             StartCoroutine(ActivarFase3());
         }
+
+        // Reproducir el sonido de la bola en su crecimiento (solo cuando se está escalando)
+        if (bola.transform.localScale != targetScale && !audioSourceBola.isPlaying)
+        {
+            audioSourceBola.PlayOneShot(sonidoBola);
+        }
     }
 
     private IEnumerator ActivarFase2()
@@ -89,6 +121,15 @@ public class Timer : MonoBehaviour
         isPhase2Active = true;
         worldCollider.enabled = true;
         tutorialCanvas.ShowPhase2Tutorial();
+
+        // Cambiar el audio a fase 2
+        audioSource.clip = fase2Audio;
+        audioSource.Play();
+
+        // Cambiar el sonido de fondo a fase 2
+        backgroundAudioSource.clip = fase2BackgroundSound;
+        backgroundAudioSource.loop = true;  // Repetir el sonido de fondo
+        backgroundAudioSource.Play();
 
         orderManager.SetPhase(2); // Activa la fase 2 en OrderManager
 
@@ -103,6 +144,15 @@ public class Timer : MonoBehaviour
 
         timer = 10f; // Temporizador de 10 segundos para la fase 3
         tutorialCanvas.ShowPhase3Tutorial();
+
+        // Cambiar el audio a fase 3
+        audioSource.clip = fase3Audio;
+        audioSource.Play();
+
+        // Cambiar el sonido de fondo a fase 3
+        backgroundAudioSource.clip = fase3BackgroundSound;
+        backgroundAudioSource.loop = true;  // Repetir el sonido de fondo
+        backgroundAudioSource.Play();
 
         orderManager.SetPhase(3); // Activa la fase 3 en OrderManager
 
@@ -120,6 +170,21 @@ public class Timer : MonoBehaviour
         bola.SetActive(true);
         TORMETA.SetActive(true);
         tutorialCanvas.ShowPhase4Tutorial();
+
+        // Cambiar el audio a fase 4
+        audioSource.clip = fase4Audio;
+        audioSource.Play();
+
+        // Cambiar el sonido de fondo a fase 4
+        backgroundAudioSource.clip = fase4BackgroundSound;
+        backgroundAudioSource.loop = true;  // Repetir el sonido de fondo
+        backgroundAudioSource.Play();
+
+        // Reproducir sonido del dragón
+        if (sonidoDragon != null && !audioSourceDragon.isPlaying)
+        {
+            audioSourceDragon.PlayOneShot(sonidoDragon);
+        }
 
         orderManager.SetPhase(4); // Activa la fase 4 en OrderManager
 

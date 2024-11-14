@@ -46,7 +46,7 @@ public class TanqueComb : MonoBehaviour
     {
         if (currentFuel > 0)
         {
-            currentFuel = Mathf.Max(0, currentFuel - 0.02f * Time.deltaTime);
+            currentFuel = Mathf.Max(0, currentFuel - 0.01f * Time.deltaTime);
         }
 
         UpdateFuelBar();

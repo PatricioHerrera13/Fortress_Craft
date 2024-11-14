@@ -18,6 +18,11 @@ public class CraftingAnvil : MonoBehaviour
     public enum CraftingMode { Time, Pulses }
     public CraftingMode craftingMode; // Selección de modo de crafteo
 
+    // Nuevas variables para los sonidos
+    public AudioClip cambiarRecetaClip;  // Sonido al cambiar de receta
+    public AudioClip craftearObjetoClip; // Sonido al craftear el objeto
+    public AudioSource audioSource; // Referencia al AudioSource central
+
     private void Awake() {
         NextRecipe(); // Inicializa la receta al comenzar
         craftingProgressBar.OnCraftingComplete += HandleCraftingComplete; // Suscribirse al evento
@@ -52,6 +57,10 @@ public class CraftingAnvil : MonoBehaviour
         }
 
         recipeImage.sprite = craftingRecipeSO.sprite; // Actualiza la imagen de la receta
+        // Reproducir el sonido de cambio de receta
+        if (audioSource != null && cambiarRecetaClip != null) {
+            audioSource.PlayOneShot(cambiarRecetaClip);
+        }
     }
 
     public void Craft(bool isPlayer) {
@@ -117,5 +126,9 @@ public class CraftingAnvil : MonoBehaviour
         // Instanciar el ítem solo cuando el crafting se complete
         GameObject spawnedItemGameObject = Instantiate(craftingRecipeSO.outputItemSO.prefab, itemSpawnPoint.position, itemSpawnPoint.rotation);
         Debug.Log("Ítem fabricado: " + spawnedItemGameObject.name);
+        // Reproducir sonido al craftear el objeto
+        if (audioSource != null && craftearObjetoClip != null) {
+            audioSource.PlayOneShot(craftearObjetoClip);
+        }
     }
 }

@@ -8,6 +8,10 @@ public class Dispenser : MonoBehaviour
     [SerializeField] private float cooldownTime = 1f; // Tiempo de enfriamiento en segundos, editable en el Inspector
     private bool isCoolingDown = false; // Flag para verificar si está en enfriamiento
 
+    // Variables para manejar los sonidos
+    public AudioSource audioSource; // El AudioSource que reproducirá los sonidos
+    public AudioClip sfxDispenseItem; // Sonido para cuando se dispensa un ítem
+
     // Método que se llama cuando el jugador interactúa con el dispensador
     public void Interact(MonoBehaviour player)
     {
@@ -27,6 +31,12 @@ public class Dispenser : MonoBehaviour
                 {
                     grabItemMethod.Invoke(player, new object[] { newItem });
                     Debug.Log($"Dispensed: {newItem.name}");
+
+                    // Reproducir sonido de dispensado
+                    if (sfxDispenseItem != null && audioSource != null)
+                    {
+                        audioSource.PlayOneShot(sfxDispenseItem);
+                    }
 
                     // Inicia el enfriamiento
                     StartCoroutine(StartCooldown());

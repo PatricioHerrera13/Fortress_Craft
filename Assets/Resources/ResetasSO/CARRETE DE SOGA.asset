@@ -17,5 +17,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: cfd8e64ce5543ec44868a74ce67db94f, type: 2}
   - {fileID: 11400000, guid: cfd8e64ce5543ec44868a74ce67db94f, type: 2}
   outputItemSO: {fileID: 11400000, guid: ecb4653e916845a4183399d2e17cb4bb, type: 2}
-  craftingTime: 5
-  requiredPulses: 10
+  craftingTime: 3
+  requiredPulses: 3
